@@ -69,8 +69,8 @@ export default function SocketHandler(
                 io.to("main" + roomNumber).emit(
                   "onStart",
                   "main" + roomNumber,
-                  roomUsers[0].username,
-                  roomUsers
+                  [...roomUsers, { id: socket.id, username, name }],
+                  0
                 );
               }
             }
@@ -86,8 +86,19 @@ export default function SocketHandler(
         const roomUsers = rooms.get(room);
 
         if (roomUsers) {
-          io.to(room).emit("onOver", roomUsers[winnerIndex].name);
+          io.to(room).emit("onOver", roomUsers[winnerIndex]);
         }
+      });
+
+      socket.on("restart", (username, room) => {
+        console.log(`${username} restarted the game`);
+
+        io.to(room).emit(
+          "onStart",
+          room,
+          rooms.get(room),
+          Math.round(Math.random() * 10000) % 2
+        );
       });
 
       socket.on("disconnect", (reason) => {
