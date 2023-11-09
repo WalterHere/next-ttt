@@ -4,14 +4,15 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface ITTTBox {
   status: number;
+  checkStatus: boolean;
   onClick: Function;
 }
 
-export function TTTBox({ status, onClick }: ITTTBox) {
+export function TTTBox({ status, checkStatus, onClick }: ITTTBox) {
   return (
     <div
-      className={`w-40 h-40 border-solid border-2 border-black m-1 bg-${
-        status === 3 ? "red" : "black"
+      className={`w-40 h-40 border-solid border-2 border-black bg- m-1 bg-${
+        checkStatus ? "red-700" : "black"
       } font-light flex justify-center items-center`}
       onClick={() => onClick()}
     >

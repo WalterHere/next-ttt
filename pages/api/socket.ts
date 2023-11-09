@@ -27,7 +27,10 @@ interface RequestWithQuery extends IncomingMessage {
 }
 
 let roomNumber = 0;
-const rooms = new Map<string, Array<{ id: string; username: string }>>();
+const rooms = new Map<
+  string,
+  Array<{ id: string; username: string; name: string }>
+>();
 
 export default function SocketHandler(
   _req: NextApiRequest,
@@ -41,7 +44,7 @@ export default function SocketHandler(
     const io = new Server(res.socket.server);
 
     io.on("connect", async (socket) => {
-      socket.on("login", (username) => {
+      socket.on("login", (username, name) => {
         const roomUsers = rooms.get("main" + roomNumber) ?? [];
 
         if (roomUsers) {
@@ -49,22 +52,26 @@ export default function SocketHandler(
             if (roomUsers.length === 2) {
               roomNumber++;
 
-              rooms.set("main" + roomNumber, [{ id: socket.id, username }]);
+              rooms.set("main" + roomNumber, [
+                { id: socket.id, username, name },
+              ]);
 
               socket.join("main" + roomNumber);
             } else {
               rooms.set("main" + roomNumber, [
                 ...roomUsers,
-                { id: socket.id, username },
+                { id: socket.id, username, name },
               ]);
 
               socket.join("main" + roomNumber);
 
               if (roomUsers.length === 1) {
-                io.to("main" + roomNumber).emit("onStart", {
-                  room: "main" + roomNumber,
-                  firstTurn: roomUsers[0].username,
-                });
+                io.to("main" + roomNumber).emit(
+                  "onStart",
+                  "main" + roomNumber,
+                  roomUsers[0].username,
+                  roomUsers
+                );
               }
             }
           }
@@ -72,9 +79,15 @@ export default function SocketHandler(
       });
 
       socket.on("draw", ({ row, col, status, room }) => {
-        console.log({ row, col, status, room });
-
         io.to(room).emit("onDraw", { row, col, status });
+      });
+
+      socket.on("over", (winnerIndex, room) => {
+        const roomUsers = rooms.get(room);
+
+        if (roomUsers) {
+          io.to(room).emit("onOver", roomUsers[winnerIndex].name);
+        }
       });
 
       socket.on("disconnect", (reason) => {

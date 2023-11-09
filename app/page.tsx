@@ -19,13 +19,14 @@ export default function Page() {
 
   return (
     <div className="w-48 mx-auto mt-48">
+      <h2 className="mb-10">Tic-Tac-Toe</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="price"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            Input your username
+            Input your name
           </label>
           <div className="relative mt-2 rounded-md shadow-sm">
             <input
@@ -33,7 +34,7 @@ export default function Page() {
               name="price"
               id="price"
               className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder="Username"
+              placeholder="Your name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
