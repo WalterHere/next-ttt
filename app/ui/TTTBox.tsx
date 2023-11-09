@@ -10,13 +10,15 @@ interface TTTTBox {
 export function TTTBox({ status, onClick }: TTTTBox) {
   return (
     <div
-      className="w-40 h-40 border-solid border-2 border-black m-1 bg-black font-light"
+      className={`w-40 h-40 border-solid border-2 border-black m-1 bg-${
+        status === 3 ? "red" : "black"
+      } font-light flex justify-center items-center`}
       onClick={() => onClick()}
     >
-      {status === 2 ? null : (
+      {status > 1 ? null : (
         <FontAwesomeIcon
           icon={status === 1 ? faCircle : faXmark}
-          size="10x"
+          size={status === 1 ? "8x" : "10x"}
           color="white"
         />
       )}

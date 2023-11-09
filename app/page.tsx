@@ -12,6 +12,7 @@ export default function Page() {
 
     if (username !== "") {
       localStorage.setItem("username", username + Date.now());
+      localStorage.setItem("name", username);
       router.push("/game");
     }
   };

@@ -42,8 +42,6 @@ export default function SocketHandler(
 
     io.on("connect", async (socket) => {
       socket.on("login", (username) => {
-        console.log(rooms);
-
         const roomUsers = rooms.get("main" + roomNumber) ?? [];
 
         if (roomUsers) {
@@ -62,15 +60,11 @@ export default function SocketHandler(
 
               socket.join("main" + roomNumber);
 
-              if (roomUsers.length === 2) {
-                io.to("main" + roomNumber).emit(
-                  "startGame",
-                  "aaa"
-                  // {
-                  //   firstTurn: roomUsers[0].username,
-                  //   room: "main" + roomNumber,
-                  // }
-                );
+              if (roomUsers.length === 1) {
+                io.to("main" + roomNumber).emit("onStart", {
+                  room: "main" + roomNumber,
+                  firstTurn: roomUsers[0].username,
+                });
               }
             }
           }
@@ -78,7 +72,9 @@ export default function SocketHandler(
       });
 
       socket.on("draw", ({ row, col, status, room }) => {
-        socket.to(room).emit("onDraw", { row, col, status });
+        console.log({ row, col, status, room });
+
+        io.to(room).emit("onDraw", { row, col, status });
       });
 
       socket.on("disconnect", (reason) => {
