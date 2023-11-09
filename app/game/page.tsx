@@ -22,14 +22,14 @@ export default function Page() {
       router.push("/");
     } else {
       fetch("/api/socket").then(() => {
-        socket = io();
+        socket = io({ query: { username: localStorage.getItem("username") } });
 
         socket.on("connect", () => {
           socket.emit("login", localStorage.getItem("username"));
         });
 
-        socket.on("startGame", (a: { firstTurn: string; room: string }) => {
-          console.log(a);
+        socket.on("startGame", (...arg) => {
+          console.log(arg);
           // setRoom(room);
           // alert("Game started!");
 

@@ -1,4 +1,4 @@
-import type { Server as HTTPServer } from "http";
+import type { Server as HTTPServer, IncomingMessage } from "http";
 import type { Socket as NetSocket } from "net";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Server as IOServer } from "socket.io";
@@ -22,6 +22,10 @@ interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
 
+interface RequestWithQuery extends IncomingMessage {
+  _query: { username: string };
+}
+
 let roomNumber = 0;
 const rooms = new Map<string, Array<{ id: string; username: string }>>();
 
@@ -38,6 +42,8 @@ export default function SocketHandler(
 
     io.on("connect", async (socket) => {
       socket.on("login", (username) => {
+        console.log(rooms);
+
         const roomUsers = rooms.get("main" + roomNumber) ?? [];
 
         if (roomUsers) {
@@ -76,8 +82,10 @@ export default function SocketHandler(
       });
 
       socket.on("disconnect", (reason) => {
+        const username = (socket.request as RequestWithQuery)._query.username;
+
         rooms.forEach((item, key) => {
-          if (item.findIndex((item) => item.id === socket.id) !== -1) {
+          if (item.findIndex((item) => item.username === username) !== -1) {
             rooms.delete(key);
           }
         });
