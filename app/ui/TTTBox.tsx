@@ -2,12 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-interface TTTTBox {
+interface ITTTBox {
   status: number;
   onClick: Function;
 }
 
-export function TTTBox({ status, onClick }: TTTTBox) {
+export function TTTBox({ status, onClick }: ITTTBox) {
   return (
     <div
       className={`w-40 h-40 border-solid border-2 border-black m-1 bg-${
